@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { signIn } from "Redux/Slices/AuthSlice";
 
 function Signin() {
 
@@ -8,6 +10,16 @@ function Signin() {
         password : ''
     });
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    function resetForm(){
+        setSigninDetails({
+            email : '',
+            password : ''
+        });
+    }
+
     function handleFormChange (e) {
         const {name,value} = e.target;
         setSigninDetails({
@@ -15,9 +27,15 @@ function Signin() {
             [name]:value
         })
     }
-    function onFormSubmit(e){
+    async function onFormSubmit(e){
         e.preventDefault();
-        console.log(siginDetails);
+        const response = await dispatch(signIn(siginDetails));
+        console.log(response);
+        if (response?.payload?.data){
+            navigate('/');
+        }
+        resetForm();
+      
         
     }
     

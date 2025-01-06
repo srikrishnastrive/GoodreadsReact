@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { signUp } from "Redux/Slices/AuthSlice";
 
 function Signup() {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [signupDetails,setSignupDetails] = useState({
         username:'',
@@ -16,10 +21,24 @@ function Signup() {
             [name]:value
         })
     }
+    
+    function resetForm (){
+        setSignupDetails({
+            username:'',
+            email:'',
+            password:''
+        });
+    }
 
-    function onHandleSubmit(e){
+    async function onHandleSubmit(e){
         e.preventDefault();
-        console.log(signupDetails);
+        const response = await dispatch(signUp(signupDetails));
+        console.log(response);
+        if (response?.payload?.data){
+            
+            navigate('/signin');
+        }
+        resetForm();
     }
 
 

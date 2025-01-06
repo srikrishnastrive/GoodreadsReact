@@ -1,18 +1,69 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axiosInstance from "Configs/axiosInstance";
+import toast from "react-hot-toast";
+
 
 const initialState = {
     isLoggedIn : localStorage.getItem('isLoggedIn') || false,
-    userame : localStorage.getItem('username') || '',
+    username : localStorage.getItem('username') || '',
     token : localStorage.getItem('token') || ''
  }
+
+ export const signUp = createAsyncThunk("auth/signup",async (data)=>{
+    try {
+        const response = axiosInstance.post('signup',data);
+        toast.promise(response,{
+            loading:'submitting form...',
+            success:'Successfully Signed up!!',
+            error :'Something went wrong'
+        });
+        return await response;
+    } catch (error) {
+        console.log(error);
+        toast.error('Cannot signup, something went wrong');
+    }
+ });
+ 
+ export const signIn = createAsyncThunk("auth/signin", async (data)=> {
+    try {
+        const response = axiosInstance.post('signin',data);
+        toast.promise(response,{
+            loading:'submitting form...',
+            success:'Successfully Signed In!!',
+            error :'Something went wrong'
+        });
+        return await response;
+        
+    } catch (error) {
+        console.log(error);
+        if (error?.response?.data?.err){
+            toast.error(error?.response?.data?.err)
+        }
+        else {
+            toast.error("Cannot singin, something went wrong");
+        }
+        
+    }
+ })
 
 
 const AuthSlice = createSlice({
     name:'auth',
     initialState,
     reducers:{},
-    extraReducers : () => {
-
+    extraReducers : (builder) => {
+        builder.addCase(signIn.fulfilled,(state,action)=>{
+            if (action?.payload?.data){
+               
+                state.isLoggedIn = (action?.payload?.data?.data !== undefined);
+                state.username = action?.payload?.data?.data?.username;
+                state.token = action?.payload?.data?.data?.token
+                localStorage.setItem("isLoggedIn",(action?.payload?.data?.data !== undefined));
+                localStorage.setItem("username",action?.payload?.data?.data?.username);
+                localStorage.setItem("token",action?.payload?.data?.data?.token);
+                
+            }
+        })
     }
 
 });

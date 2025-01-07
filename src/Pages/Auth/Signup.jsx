@@ -1,107 +1,116 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import Layout from "Layouts/Layout";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "Redux/Slices/AuthSlice";
 
 function Signup() {
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [signupDetails,setSignupDetails] = useState({
-        username:'',
-        email:'',
-        password:''
-    })
+    const state = useSelector((state) => state.auth);
 
-    function handleFormChange(e){
-        const {name,value} = e.target;
+    const [signupDetails, setSignupDetails] = useState({
+        username: '',
+        email: '',
+        password: ''
+    });
+
+    function handleFormChange(e) {
+        const { name, value } = e.target;
         setSignupDetails({
             ...signupDetails,
-            [name]:value
-        })
-    }
-    
-    function resetForm (){
-        setSignupDetails({
-            username:'',
-            email:'',
-            password:''
+            [name]: value
         });
     }
 
-    async function onHandleSubmit(e){
+    function resetForm() {
+        setSignupDetails({
+            username: '',
+            email: '',
+            password: ''
+        });
+    }
+
+    async function onHandleSubmit(e) {
         e.preventDefault();
         const response = await dispatch(signUp(signupDetails));
         console.log(response);
-        if (response?.payload?.data){
-            
+        if (response?.payload?.data) {
             navigate('/signin');
         }
         resetForm();
     }
 
+    useEffect(() => {
+        if (state.isLoggedIn) {
+            navigate('/dashboard');
+        }
+    }, []);
 
     return (
-        <div className="h-[100vh] flex flex-col items-center justify-center">
-            <div>
-                <h1 className="text-white text-5xl">Create a new account</h1>
-            </div>
-            <div className="mt-4">
-                <p className="text-white">
-                    Already have an account ? 
-                    <Link to="/signin">
-                        <button className="btn btn-success rounded-md px-2 mx-5 hover:bg-green-400">
-                            Sign In
-                        </button>
-                    </Link>
-                </p>
-            </div>
-            <div className="w-full">
-                <form  onSubmit={onHandleSubmit} className="flex flex-col justify-center items-center w-3/4 mx-auto" autoComplete="off">
-                    <div className="my-5 w-1/3 text-black">
+        <Layout>
+            <div className="flex flex-col items-center justify-center min-h-screen ">
+                <div>
+                    <h1 className="text-white text-5xl">Create a new account</h1>
+                </div>
+                <div className="mt-4">
+                    <p className="text-white">
+                        Already have an account? 
+                        <Link to="/signin">
+                            <button className="btn btn-success rounded-md px-2 mx-5 hover:bg-green-400">
+                                Sign In
+                            </button>
+                        </Link>
+                    </p>
+                </div>
+                <form
+                    onSubmit={onHandleSubmit}
+                    className="flex flex-col justify-center items-center w-full max-w-md mx-auto mt-8 p-6  rounded-md shadow-lg"
+                    autoComplete="off"
+                >
+                    <div className="my-5 w-full">
                         <input
                             autoComplete="off"
                             type="text"
-                            placeholder="username..."
-                            className="px-8 py-3 bg-white w-full"
+                            placeholder="Username..."
+                            className="px-4 py-2 border border-gray-300 rounded-md w-full"
                             name="username"
                             value={signupDetails.username}
                             onChange={handleFormChange}
                         />
                     </div>
-                    <div className="my-5 w-1/3 text-black">
+                    <div className="my-5 w-full">
                         <input
                             autoComplete="off"
                             type="email"
-                            placeholder="email..."
-                            className="px-8 py-3 bg-white w-full"
+                            placeholder="Email..."
+                            className="px-4 py-2 border border-gray-300 rounded-md w-full"
                             name="email"
                             value={signupDetails.email}
                             onChange={handleFormChange}
                         />
                     </div>
-                    <div className="my-5 w-1/3 text-black">
+                    <div className="my-5 w-full">
                         <input
                             autoComplete="off"
                             type="password"
-                            placeholder="password..."
-                            className="px-8 py-3 bg-white w-full"
+                            placeholder="Password..."
+                            className="px-4 py-2 border border-gray-300 rounded-md w-full"
                             name="password"
                             value={signupDetails.password}
                             onChange={handleFormChange}
                         />
                     </div>
-                    <div className="my-5 w-1/3">
-                        <button className="btn btn-success rounded-md px-2 py-1 w-full hover:bg-green-400" type="submit">
+                    <div className="my-5 w-full">
+                        <button className="btn btn-success rounded-md px-4 py-2 w-full hover:bg-green-400" type="submit">
                             Submit
                         </button>
                     </div>
-                    
                 </form>
             </div>
-        </div>
-    )
+        </Layout>
+    );
 }
 
 export default Signup;

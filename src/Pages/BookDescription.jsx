@@ -1,12 +1,21 @@
 import BookImage from 'Assets/Images/book.jpg';
 import Layout from "Layouts/Layout";
+import { useEffect } from 'react';
 
 import { BiUser } from 'react-icons/bi';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useLocation } from "react-router-dom";
+import { addBookToShelves, getAllBookShelves } from 'Redux/Slices/ShellSlice';
 
 export default function BookDescription() {
     const {state} = useLocation();
+    const shelfState = useSelector((state)=> state.shelf);
+    const dispatch = useDispatch();
+
+    useEffect(()=>{
+        dispatch(getAllBookShelves());
+    },[]);
     const genres = [
         {_id:1,
         name:"horror"
@@ -52,19 +61,20 @@ export default function BookDescription() {
                             <div className='text-xl'>
                                 Publish Date: <span className='text-yellow-400'>{state.publishDate}</span>
                             </div>
-                            {/* <div>
-                            <details className="dropdown mb-32">
-                                <summary className="m-1 btn">Add to Shelf</summary>
-                                <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
-                                    {shelfState.shelfList.length > 0 && shelfState.shelfList.map((shelf) => {
-                                        return <li onClick={async () => {
-                                            await dispatch(addBookToShelf({shelfName: shelf.name, bookId: state._id}));
+                            <div>
+                            <details className="dropdown">
+                                <summary className="btn m-1">Add to Shelf</summary>
+                                <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                    {shelfState.shelfList.length > 0 && shelfState.shelfList.map((shelf)=>{
+                                        return <li onClick={async () =>{
+                                            await dispatch(addBookToShelves({shelfName:shelf.name,bookId:state._id}));
                                             await dispatch(getAllBookShelves());
-                                        }} className='text-white' key={shelf._id}><a>{shelf.name}</a></li>;
+                                        }}
+                                        className='text-white' key={shelf._id}><a>{shelf.name}</a></li>
                                     })}
                                 </ul>
                                 </details>
-                            </div> */}
+                            </div>
                         </div>  
                     </div>
                 )

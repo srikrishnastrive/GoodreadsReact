@@ -24,6 +24,22 @@ export const getAllBookShelves = createAsyncThunk("shelfs/getAllBookShelves",asy
     }
 })
 
+export const addBookToShelves = createAsyncThunk("shelfs/addBookToShelves",async (data) =>{
+    try {
+        const response = axiosInstance.patch(`/bookshelves/${data.shelfName}/add/${data.bookId}`,{},{headers :{
+            'x-access-token':localStorage.getItem('token')
+        }});
+        toast.promise(response,{
+            loading :'adding book to shelf data',
+            success :'Successfully added to shelf',
+            error :'Something went wrong'
+        });
+        return await response;
+    } catch (error) {
+        console.log(error);
+        toast.error('Something went wrong cannot download bookshelves');
+    }
+})
 
 const ShelvesSlice = createSlice({
     name :'shelf',

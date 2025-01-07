@@ -22,6 +22,11 @@ export default function Shelf (){
                 console.log(response?.payload?.data?.data[0]._id);
             }
         }
+        else if (shelfsState.shelfList.length > 0){
+           
+            setBooks(shelfsState.shelfList[0].books)
+            setActiveShelf(shelfsState.shelfList[0]._id);
+        }
     }
 
     function changeActiveShelf(id){

@@ -5,7 +5,7 @@ export default function Layout({ children }) {
     return (
         <>
             <Navbar />
-            <div className="flex-grow flex items-start justify-center">
+            <div className="flex-grow flex items-start justify-center min-h-screen ">
                 {children}
             </div>
             <Footer />

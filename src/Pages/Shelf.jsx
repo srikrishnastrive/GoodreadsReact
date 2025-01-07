@@ -1,7 +1,7 @@
 import Layout from "Layouts/Layout";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllBookShelves } from "Redux/Slices/ShellSlice";
+import { createShelf, getAllBookShelves } from "Redux/Slices/ShelfSlice";
 import bookImage from 'Assets/Images/book.jpg'
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 export default function Shelf (){
     const [activeShelf,setActiveShelf] = useState(null);
     const [books,setBooks] = useState([]);
+    const [shelfInput,setShelfInput] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const shelfsState = useSelector((state)=>state.shelf)
@@ -45,8 +46,8 @@ export default function Shelf (){
     return (
         <>
                 <Layout>
-                        <div className="flex justify-start items-start gap-32">
-                            <div className="flex flex-col justify-start items-start">
+                        <div className="flex justify-start items-start gap-32 ">
+                            <div className="flex flex-col justify-start items-start ">
                             {shelfsState.shelfList && shelfsState.shelfList.length > 0 &&
                                     shelfsState.shelfList.map((shelf) => (
                                         <div key={shelf._id} className="mt-3 mb-3">
@@ -56,11 +57,30 @@ export default function Shelf (){
                                     {shelf.name}
                                     </button>
                                         </div>
-                                ))
-                                }
+                                ))}
+                                <div>
+                                    <input
+                                        className='p-4 bg-white rounded-sm mb-4 text-black' 
+                                        placeholder='shelf name'
+                                        onChange={(e)=>{
+                                            setShelfInput(e.target.value);
+                                        }}
+                                        value={shelfInput}
+                                     />
+                                     <button 
+                                     className="btn btn-secondary block px-4 py-2 "
+                                     onClick={async ()=>{
+                                        await dispatch(createShelf({shelfName:shelfInput}));
+                                        await dispatch(getAllBookShelves());
+                                        setShelfInput('');
+                                     }}
+                                     >
+                                        create New shelf 
+                                     </button>
+                                </div>
                             </div>
 
-                    </div>
+                        </div>
                     <div className="overflow-x-auto">
                         {books.length > 0 && (
                             <table className="table">
@@ -79,7 +99,7 @@ export default function Shelf (){
                         
                             {books.length > 0 && books.map(book => {
                                 return (
-                                    <tr key={book._id} onClick={()=>{
+                                    <tr className="hover:bg-slate-700" key={book._id} onClick={()=>{
                                         navigate("/book/description",{state : {...book}})
                                     }}>
                             

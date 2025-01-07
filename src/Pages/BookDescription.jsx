@@ -6,7 +6,7 @@ import { BiUser } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useLocation } from "react-router-dom";
-import { addBookToShelves, getAllBookShelves } from 'Redux/Slices/ShellSlice';
+import { addBookToShelves, getAllBookShelves } from 'Redux/Slices/ShelfSlice';
 
 export default function BookDescription() {
     const {state} = useLocation();

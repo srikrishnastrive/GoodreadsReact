@@ -37,7 +37,23 @@ export const addBookToShelves = createAsyncThunk("shelfs/addBookToShelves",async
         return await response;
     } catch (error) {
         console.log(error);
-        toast.error('Something went wrong cannot download bookshelves');
+        toast.error('Something went wrong cannot add to  bookshelves');
+    }
+})
+
+export const createShelf = createAsyncThunk("shelfs/createShelf", async (data) => {
+    try {
+        const response = axiosInstance.post('/bookshelves',{name:data.shelfName},{headers:{
+            'x-access-token':localStorage.getItem('token')
+        }});
+        toast.promise(response,{
+            loading :'adding new  shelf data',
+            success :'Successfully added new shelf',
+            error :'Something went wrong'
+        });
+    } catch (error) {
+        console.log(error);
+        toast.error('Something went wrong cannot add  new shelves');
     }
 })
 
